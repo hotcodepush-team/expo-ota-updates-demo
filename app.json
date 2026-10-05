@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "HotCodePushDemo",
+    "slug": "expo-ota-updates-demo",
+    "version": "1.0.0",
+    "ios": {
+      "bundleIdentifier": "com.hotcodepush.demo.expo"
+    },
+    "android": {
+      "package": "com.hotcodepush.demo.expo"
+    },
+    "plugins": [
+      "@hotcodepush/expo-ota-updates",
+      "./plugins/with-local-stack-cleartext",
+      "./plugins/with-protocol-pod-ios-floor"
+    ]
+  }
+}

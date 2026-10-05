@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  JAVA_VERSION: 21
+
+# Debug builds of the native projects prebuild generates with the plugin: they compile both with the SDK and need no
+# credential, since a debug build asks Metro for its JavaScript and embeds nothing, and HOTCODEPUSH_OFFLINE keeps the
+# build step from asking the API. The release builds, whose build step creates the binary, are the device test's, in
+# the monorepo.
+jobs:
+  javascript:
+    name: Check the JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+  android:
+    name: Build the Android debug app
+    runs-on: ubuntu-latest
+    env:
+      HOTCODEPUSH_OFFLINE: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
+      - run: npm ci
+      - run: npx expo prebuild --platform android --no-install
+      - run: ./gradlew assembleDebug --console=plain
+        working-directory: android
+  ios:
+    name: Build the iOS simulator app
+    runs-on: macos-latest
+    env:
+      HOTCODEPUSH_OFFLINE: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: latest-stable
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx expo prebuild --platform ios --no-install
+      - run: pod install
+        working-directory: ios
+      - run: xcodebuild -workspace ios/HotCodePushDemo.xcworkspace -scheme HotCodePushDemo -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -quiet build
