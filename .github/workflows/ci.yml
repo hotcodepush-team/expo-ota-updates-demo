@@ -12,10 +12,11 @@ permissions:
 env:
   JAVA_VERSION: 21
 
-# Debug builds of the native projects prebuild generates with the plugin: they compile both with the SDK and need no
-# credential, since a debug build asks Metro for its JavaScript and embeds nothing, and HOTCODEPUSH_OFFLINE keeps the
-# build step from asking the API. The release builds, whose build step creates the binary, are the device test's, in
-# the monorepo.
+# Release builds of the native projects prebuild generates with the plugin, on every Expo SDK the package supports: a
+# release build bundles the JavaScript and runs the build step, which writes hotcodepush.json into the app, so each job
+# fails when the app lacks the file. SDK 55 is the demo's own, built from the lockfile; every other SDK first moves the
+# project to that SDK's latest patch. HOTCODEPUSH_OFFLINE keeps the build step from asking the API, so no credential is
+# needed. The device test, on the demo's own SDK, is the monorepo's.
 jobs:
   javascript:
     name: Check the JavaScript
@@ -30,8 +31,12 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
   android:
-    name: Build the Android debug app
+    name: Build the Android release app on Expo SDK ${{ matrix.sdk }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk: [55, 56, 57]
     env:
       HOTCODEPUSH_OFFLINE: '1'
     steps:
@@ -46,12 +51,21 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
       - run: npm ci
+      - if: matrix.sdk != 55
+        run: |
+          npm install expo@^${{ matrix.sdk }}.0.0
+          npx expo install --fix
       - run: npx expo prebuild --platform android --no-install
-      - run: ./gradlew assembleDebug --console=plain
+      - run: ./gradlew assembleRelease --console=plain
         working-directory: android
+      - run: unzip -l android/app/build/outputs/apk/release/app-release.apk assets/hotcodepush.json
   ios:
-    name: Build the iOS simulator app
+    name: Build the iOS simulator release app on Expo SDK ${{ matrix.sdk }}
     runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk: [55, 56, 57]
     env:
       HOTCODEPUSH_OFFLINE: '1'
     steps:
@@ -64,7 +78,12 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - if: matrix.sdk != 55
+        run: |
+          npm install expo@^${{ matrix.sdk }}.0.0
+          npx expo install --fix
       - run: npx expo prebuild --platform ios --no-install
       - run: pod install
         working-directory: ios
-      - run: xcodebuild -workspace ios/HotCodePushDemo.xcworkspace -scheme HotCodePushDemo -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -quiet build
+      - run: xcodebuild -workspace ios/HotCodePushDemo.xcworkspace -scheme HotCodePushDemo -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/DerivedData CODE_SIGNING_ALLOWED=NO -quiet build
+      - run: test -f ios/DerivedData/Build/Products/Release-iphonesimulator/HotCodePushDemo.app/hotcodepush.json
