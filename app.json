@@ -11,8 +11,7 @@
     },
     "plugins": [
       "@hotcodepush/expo-ota-updates",
-      "./plugins/with-local-stack-cleartext",
-      "./plugins/with-protocol-pod-ios-floor"
+      "./plugins/with-local-stack-cleartext"
     ]
   }
 }
