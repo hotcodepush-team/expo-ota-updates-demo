@@ -1,0 +1,22 @@
+# The debug build: the development build embeds no bundle and loads its
+# JavaScript from the development server, so live updates are off in it: the
+# screen shows the embedded release, and a sync answers SKIPPED with
+# DEBUG_BUILD without a request. The runner installs the debug build, starts
+# `npm start` and opens the app on that server through the development
+# client's link, `exp+expo-ota-updates-demo://expo-development-client/?url=`
+# followed by the server's URL with `?disableOnboarding=1`, encoded, which
+# keeps the developer menu's first-run sheet from showing. By hand, run
+# `npm run ios` or `npm run android`, dismiss that sheet once and run
+# `maestro test maestro/debug-build.yaml`.
+appId: com.hotcodepush.demo.expo
+---
+# The first start waits for the development server to bundle the JavaScript.
+- extendedWaitUntil:
+    visible: 'Sync now'
+    timeout: 120000
+- assertVisible: 'embedded'
+- tapOn: 'Sync now'
+- extendedWaitUntil:
+    notVisible: 'syncing…'
+    timeout: 60000
+- assertVisible: 'SKIPPED · DEBUG_BUILD'
