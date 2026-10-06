@@ -85,5 +85,10 @@ jobs:
       - run: npx expo prebuild --platform ios --no-install
       - run: pod install
         working-directory: ios
-      - run: xcodebuild -workspace ios/HotCodePushDemo.xcworkspace -scheme HotCodePushDemo -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/DerivedData CODE_SIGNING_ALLOWED=NO -quiet build
+      - run: xcodebuild -workspace ios/HotCodePushDemo.xcworkspace -scheme HotCodePushDemo -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/DerivedData CODE_SIGNING_ALLOWED=NO -quiet build 2>&1 | tee xcodebuild.log
+        shell: bash
       - run: test -f ios/DerivedData/Build/Products/Release-iphonesimulator/HotCodePushDemo.app/hotcodepush.json
+      # The build step's phase is marked to run on every build, or Xcode warns that it declares no outputs. The search
+      # names the phase: other phases' warnings and Xcode's notes on every phase so marked share the wording.
+      - run: |
+          ! grep "warning: Run script build phase 'Create HotCodePush binary' will be run during every build" xcodebuild.log
