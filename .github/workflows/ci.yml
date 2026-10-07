@@ -14,7 +14,8 @@ env:
 
 # Release builds of the native projects prebuild generates with the plugin, on every Expo SDK the package supports: a
 # release build bundles the JavaScript and runs the build step, which writes hotcodepush.json into the app, so each job
-# fails when the app lacks the file. SDK 55 is the demo's own, built from the lockfile; every other SDK first moves the
+# fails when the app lacks the file, when the file names no embedded bundle, or when a file of that bundle is not in the
+# app as its manifest records it. SDK 55 is the demo's own, built from the lockfile; every other SDK first moves the
 # project to that SDK's latest patch. HOTCODEPUSH_OFFLINE keeps the build step from asking the API, so no credential is
 # needed. The device test, on the demo's own SDK, is the monorepo's.
 jobs:
@@ -58,7 +59,9 @@ jobs:
       - run: npx expo prebuild --platform android --no-install
       - run: ./gradlew assembleRelease --console=plain
         working-directory: android
-      - run: unzip -l android/app/build/outputs/apk/release/app-release.apk assets/hotcodepush.json
+      - run: |
+          unzip -q android/app/build/outputs/apk/release/app-release.apk 'assets/*' -d apk
+          node .github/scripts/check-embedded-bundle.mjs apk/assets
   ios:
     name: Build the iOS simulator release app on Expo SDK ${{ matrix.sdk }}
     runs-on: macos-latest
@@ -87,7 +90,7 @@ jobs:
         working-directory: ios
       - run: xcodebuild -workspace ios/HotCodePushDemo.xcworkspace -scheme HotCodePushDemo -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath ios/DerivedData CODE_SIGNING_ALLOWED=NO -quiet build 2>&1 | tee xcodebuild.log
         shell: bash
-      - run: test -f ios/DerivedData/Build/Products/Release-iphonesimulator/HotCodePushDemo.app/hotcodepush.json
+      - run: node .github/scripts/check-embedded-bundle.mjs ios/DerivedData/Build/Products/Release-iphonesimulator/HotCodePushDemo.app
       # The build step's phase is marked to run on every build, or Xcode warns that it declares no outputs. The search
       # names the phase: other phases' warnings and Xcode's notes on every phase so marked share the wording.
       - run: |
