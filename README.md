@@ -11,7 +11,7 @@ npx expo prebuild
 ```
 
 The native projects are not committed: `npx expo prebuild` generates `ios/` and `android/` with the SDK's config plugin, which wires the build step and the served bundle into them, and installs the pods.
-`app.json` lists two more plugins, the demo's own under `plugins/`: one permits cleartext to the device test's local stack on Android, the other is a temporary repair of the `HotCodePushProtocol` pod's iOS floor.
+`app.json` lists one more plugin, the demo's own under `plugins/`, which permits cleartext to the device test's local stack on Android.
 The committed `hotcodepush.json` names a placeholder app: delete it and run `npx hotcodepush init`, which writes one that names yours.
 Then run a release build: `npx expo run:ios --configuration Release` or `npx expo run:android --variant release`.
 A release build bundles the JavaScript and runs the CLI's `binary create`, the build step, which writes the resource file `hotcodepush.json` into the app and creates the store build's binary with its embedded bundle, so log in first with `npx hotcodepush login` or set `HOTCODEPUSH_TOKEN`.
