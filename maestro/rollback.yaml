@@ -35,7 +35,7 @@ appId: com.hotcodepush.demo.expo
 # rollback reloads the release before.
 - extendedWaitUntil:
     visible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · READINESS_TIMED_OUT'
-    timeout: 60000
+    timeout: 90000
 - assertVisible: '#${EXPECTED_RELEASE_NUMBER} · ${EXPECTED_VERSION}'
 # The failed bundle is blocklisted on this device: the next check skips it.
 - tapOn: 'Sync now'

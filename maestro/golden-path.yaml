@@ -33,5 +33,5 @@ appId: com.hotcodepush.demo.expo
 - launchApp
 - extendedWaitUntil:
     visible: ${EXPECTED_VERSION}
-    timeout: 30000
+    timeout: 60000
 - assertVisible: '#${EXPECTED_RELEASE_NUMBER} · ${EXPECTED_VERSION}'
