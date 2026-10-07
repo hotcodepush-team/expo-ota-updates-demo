@@ -1,7 +1,7 @@
 # The debug build: the development build embeds no bundle and loads its
 # JavaScript from the development server, so live updates are off in it: the
 # screen shows the embedded release, and a sync answers SKIPPED with
-# DEBUG_BUILD without a request. The runner installs the debug build, starts
+# BUILD_DEBUG without a request. The runner installs the debug build, starts
 # `npm start` and opens the app on that server, its URL followed by
 # `?disableOnboarding=1`, which keeps the developer menu's first-run sheet
 # from showing: on iOS it launches the development client with
@@ -21,4 +21,4 @@ appId: com.hotcodepush.demo.expo
 - extendedWaitUntil:
     notVisible: 'syncing…'
     timeout: 60000
-- assertVisible: 'SKIPPED · DEBUG_BUILD'
+- assertVisible: 'SKIPPED · BUILD_DEBUG'

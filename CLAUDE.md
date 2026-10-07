@@ -39,7 +39,7 @@ No native file is committed, so none is edited by hand: a change to a native pro
 A project prebuilt with an older version of the SDK keeps that version's edits: `npx expo prebuild --clean` regenerates it.
 
 `binary create` writes `hotcodepush.json` into the app — the project's file plus `builtAt`, `fingerprint`, `embeddedBundleManifest` and `embeddedBundleId` — and creates the store build's binary; it needs a login or `HOTCODEPUSH_TOKEN`, and without one, or with `HOTCODEPUSH_OFFLINE=1`, the build names no channel and takes no updates, while a missing token fails the build where `CI` is set.
-A debug build bundles nothing and asks the development server for its JavaScript; the build step still writes its `hotcodepush.json`, without an embedded bundle, so every sync answers `SKIPPED` with `DEBUG_BUILD`; the device test and a first try of an update use release builds.
+A debug build bundles nothing and asks the development server for its JavaScript; the build step still writes its `hotcodepush.json`, without an embedded bundle, so every sync answers `SKIPPED` with `BUILD_DEBUG`; the device test and a first try of an update use release builds.
 `HOTCODEPUSH_FILES_BASE_URL` and `HOTCODEPUSH_UPDATES_BASE_URL` point the SDK at another host, the local stack or staging.
 
 ## The device test

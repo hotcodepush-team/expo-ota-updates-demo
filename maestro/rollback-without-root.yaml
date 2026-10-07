@@ -1,13 +1,13 @@
 # The bundle that mounts nothing: the app runs a release that passed
 # readiness, the next one's entry file registers no root component, so React
 # Native never starts a surface. The process ends, on iOS because the release
-# build aborts on start, and the next start rolls back (CRASHED), the reason
-# seen on iOS and Android; a readiness gate that times out and reloads the
-# release before (READY_TIMEOUT) is the accepted alternative. Either way the
-# rolledBack listener names the broken release, and the next check skips it.
-# Continues from signed.yaml, which left the app on the release it returns
-# to; the runner releases the broken build and passes its number and label.
-# By hand, release a build whose index.ts registers no root and run
+# build aborts on start, and the next start rolls back (APP_CRASHED), the
+# reason seen on iOS and Android; a readiness gate that times out and reloads
+# the release before (READINESS_TIMED_OUT) is the accepted alternative. Either
+# way the rolledBack listener names the broken release, and the next check
+# skips it. Continues from signed.yaml, which left the app on the release it
+# returns to; the runner releases the broken build and passes its number and
+# label. By hand, release a build whose index.ts registers no root and run
 # `maestro test -e BROKEN_RELEASE_NUMBER=2 -e BROKEN_VERSION=v3 -e EXPECTED_RELEASE_NUMBER=1 -e EXPECTED_VERSION=v2 maestro/rollback-without-root.yaml`.
 # No `env:` header: Maestro defines it after the `-e` parameters, so its
 # values would override them.
@@ -22,7 +22,7 @@ appId: com.hotcodepush.demo.expo
 - repeat:
     times: 3
     while:
-      visible: 'FAILED · OFFLINE.*'
+      visible: 'FAILED · DEVICE_OFFLINE.*'
     commands:
       - tapOn: 'Sync now'
       - extendedWaitUntil:
@@ -42,19 +42,19 @@ appId: com.hotcodepush.demo.expo
 - repeat:
     times: 3
     while:
-      notVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READY_TIMEOUT|CRASHED)'
+      notVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READINESS_TIMED_OUT|APP_CRASHED)'
     commands:
       - extendedWaitUntil:
-          visible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READY_TIMEOUT|CRASHED)'
+          visible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READINESS_TIMED_OUT|APP_CRASHED)'
           timeout: 30000
           optional: true
       - launchApp:
           stopApp: false
-- assertVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READY_TIMEOUT|CRASHED)'
+- assertVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READINESS_TIMED_OUT|APP_CRASHED)'
 # The failed bundle is blocklisted on this device: the next check skips it.
 - assertVisible: '#${EXPECTED_RELEASE_NUMBER} · ${EXPECTED_VERSION}'
 - tapOn: 'Sync now'
 - extendedWaitUntil:
     notVisible: 'syncing…'
     timeout: 60000
-- assertVisible: 'SKIPPED · FAILED_BEFORE'
+- assertVisible: 'SKIPPED · BUNDLE_FAILED_BEFORE'
