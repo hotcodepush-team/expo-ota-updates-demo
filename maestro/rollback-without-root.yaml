@@ -4,10 +4,11 @@
 # build aborts on start, and the next start rolls back (APP_CRASHED), the
 # reason seen on iOS and Android; a readiness gate that times out and reloads
 # the release before (READINESS_TIMED_OUT) is the accepted alternative. Either
-# way the rolledBack listener names the broken release, and the next check
-# skips it. Continues from signed.yaml, which left the app on the release it
-# returns to; the runner releases the broken build and passes its number and
-# label. By hand, release a build whose index.ts registers no root and run
+# way the updateRolledBack listener names the broken release, and the next
+# check skips it. Continues from signed.yaml, which left the app on the
+# release it returns to; the runner releases the broken build and passes its
+# number and label. By hand, release a build whose index.ts registers no root
+# and run
 # `maestro test -e BROKEN_RELEASE_NUMBER=2 -e BROKEN_VERSION=v3 -e EXPECTED_RELEASE_NUMBER=1 -e EXPECTED_VERSION=v2 maestro/rollback-without-root.yaml`.
 # No `env:` header: Maestro defines it after the `-e` parameters, so its
 # values would override them.
@@ -28,7 +29,7 @@ appId: com.hotcodepush.demo.expo
       - extendedWaitUntil:
           notVisible: 'syncing…'
           timeout: 60000
-- assertVisible: '(UPDATED|UP_TO_DATE).*'
+- assertVisible: '(DOWNLOADED|UP_TO_DATE).*'
 - stopApp
 - launchApp
 # On iOS Maestro fails the flow when a screen read meets the end of the

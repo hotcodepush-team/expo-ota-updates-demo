@@ -1,6 +1,6 @@
 # The revoke: the app runs the newest release, the operator revokes it, and
 # the next check moves the device to the newest older release it qualifies
-# for, installed at once. Continues from golden-path.yaml, which left the app
+# for, applied at once. Continues from golden-path.yaml, which left the app
 # on the release the runner then revoked; by hand, revoke the running release
 # and run `maestro test -e EXPECTED_RELEASE_NUMBER=1 -e EXPECTED_VERSION=v2 maestro/revoke.yaml`.
 # No `env:` header: Maestro defines it after the `-e` parameters, so its
