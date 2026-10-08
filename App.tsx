@@ -1,9 +1,5 @@
 import { HotCodePush, useUpdates } from '@hotcodepush/expo-ota-updates';
-import type {
-  CheckResult,
-  Release,
-  SyncResult,
-} from '@hotcodepush/expo-ota-updates';
+import type { Release, SyncResult } from '@hotcodepush/expo-ota-updates';
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -22,7 +18,7 @@ export default function App() {
       error => setDeviceId(resolveErrorText(error)),
     );
     // Fired once, on the start that follows a rollback: the release that failed and why.
-    const listening = HotCodePush.addListener('rolledBack', event =>
+    const listening = HotCodePush.addListener('updateRolledBack', event =>
       setRollbackText(
         `from ${resolveReleaseText(event.from)} · ${event.reason}`,
       ),
@@ -91,14 +87,16 @@ function resolveReleaseText(release: Release | null): string {
   return release ? `#${release.number} · ${release.bundleVersion}` : 'embedded';
 }
 
-function resolveResultText(result: CheckResult | SyncResult): string {
+function resolveResultText(result: SyncResult): string {
   switch (result.status) {
     case 'UP_TO_DATE':
       return 'UP_TO_DATE';
     case 'AVAILABLE':
       return `AVAILABLE · ${resolveReleaseText(result.release)}`;
-    case 'UPDATED':
-      return `UPDATED · ${resolveReleaseText(result.release)}, installs ${result.installAt}`;
+    case 'DOWNLOADED':
+      return `DOWNLOADED · ${resolveReleaseText(result.release)}, applies ${result.applyAt}`;
+    case 'APPLIED':
+      return `APPLIED · ${resolveReleaseText(result.release)}`;
     case 'SKIPPED':
       return `SKIPPED · ${result.reason}`;
     case 'FAILED':
