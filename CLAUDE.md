@@ -33,12 +33,12 @@ The native builds, after `npm run prebuild` and `pod install` in `ios/`: `xcodeb
 No native file is committed, so none is edited by hand: a change to a native project is a change to a config plugin.
 `app.json` lists two, and every prebuild applies them:
 
-- **`@hotcodepush/expo-ota-updates`**, the SDK's. The Xcode phase "Create HotCodePush binary" and the `apply from` line at the end of `android/app/build.gradle` run the CLI's `binary create` on what the build bundled. `AppDelegate.swift` and `MainApplication.kt` hand React Native the bundle the SDK serves. The Podfile pins `HotCodePushCore` at the commit the SDK names.
+- **`@hotcodepush/expo-ota-updates`**, the SDK's. The Xcode phase "Create HotCodePush binary" and the `apply from` line at the end of `android/app/build.gradle` run the CLI's build step on what the build bundled. `AppDelegate.swift` and `MainApplication.kt` hand React Native the bundle the SDK serves. The Podfile pins `HotCodePushCore` at the commit the SDK names.
 - **`./plugins/with-local-stack-cleartext`**, for the device test's local stack. The Android app permits cleartext to `10.0.2.2` and `localhost` alone, through a network security config. iOS needs no edit: the `Info.plist` Expo's template generates allows local networking.
 
 A project prebuilt with an older version of the SDK keeps that version's edits, the core's pin excepted, which every prebuild moves: `npx expo prebuild --clean` regenerates it.
 
-`binary create` writes `hotcodepush.json` into the app — the project's file plus `builtAt`, `fingerprint`, `embeddedBundleManifest` and `embeddedBundleId` — and creates the store build's binary; it needs a login or `HOTCODEPUSH_TOKEN`, and without one, or with `HOTCODEPUSH_OFFLINE=1`, the build names no channel and takes no updates, while a missing token fails the build where `CI` is set.
+The build step writes `hotcodepush.json` into the app — the project's file plus `builtAt`, `fingerprint`, `embeddedBundleManifest` and `embeddedBundleId` — and in a store build, an archive or a release variant, `binary create` also creates the store build's binary; it needs a login or `HOTCODEPUSH_TOKEN`, and without one, or with `HOTCODEPUSH_OFFLINE=1`, the build names no channel and takes no updates, while a store build's missing token fails the build where `CI` is set; every other build runs `resource-file write`, which never fails for it.
 A debug build bundles nothing and asks the development server for its JavaScript; the build step still writes its `hotcodepush.json`, without an embedded bundle, so every sync answers `SKIPPED` with `BUILD_DEBUG`; the device test and a first try of an update use release builds.
 `HOTCODEPUSH_FILES_BASE_URL` and `HOTCODEPUSH_UPDATES_BASE_URL` point the SDK at another host, the local stack or staging.
 
@@ -48,7 +48,7 @@ The monorepo's `e2e/` runner drives this app through the flows in `maestro/`, on
 
 1. It checks the demo out at a commit, runs `npm ci`, removes the committed `hotcodepush.json` and runs `init`, which writes the run's own.
 2. It generates the platform's native project with `npx expo prebuild --platform <platform> --no-install` and runs `pod install` on iOS.
-3. It builds the release build, `xcodebuild` for the simulator or `./gradlew assembleRelease`, under a token and the two host variables, so the build step creates the binary.
+3. It builds the store build, `xcodebuild archive` for the simulator or `./gradlew assembleRelease`, under a token and the two host variables, so the build step creates the binary.
 4. It installs the app and runs the flows, each release published with `bundle upload --platform <platform>` and `release create --bundle`.
 
 The runner relies on what this repo names, so a change of any of these is a change of the runner too:
