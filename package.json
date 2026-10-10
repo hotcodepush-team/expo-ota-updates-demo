@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hotcodepush/expo-ota-updates": "https://pkg.pr.new/hotcodepush-team/expo-ota-updates/@hotcodepush/expo-ota-updates@131e739845b2d62fc464022978fcdd44423ca6ba",
+    "@hotcodepush/expo-ota-updates": "https://pkg.pr.new/hotcodepush-team/expo-ota-updates/@hotcodepush/expo-ota-updates@bf5d5cf202209bb5f81e4d75a29b21806483a848",
     "expo": "55.0.31",
     "expo-dev-client": "55.0.40",
     "react": "19.2.0",
