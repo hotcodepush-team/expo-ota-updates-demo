@@ -20,7 +20,7 @@ export default function App() {
     // Fired once, on the start that follows a rollback: the release that failed and why.
     const listening = HotCodePush.addListener('updateRolledBack', event =>
       setRollbackText(
-        `from ${resolveReleaseText(event.from)} · ${event.reason}`,
+        `from ${resolveReleaseText(event.fromRelease)} · ${event.reason}`,
       ),
     );
     return () => {
@@ -94,7 +94,7 @@ function resolveResultText(result: SyncResult): string {
     case 'AVAILABLE':
       return `AVAILABLE · ${resolveReleaseText(result.release)}`;
     case 'DOWNLOADED':
-      return `DOWNLOADED · ${resolveReleaseText(result.release)}, applies ${result.applyAt}`;
+      return `DOWNLOADED · ${resolveReleaseText(result.release)}, applies ${result.applyStrategy}`;
     case 'APPLIED':
       return `APPLIED · ${resolveReleaseText(result.release)}`;
     case 'SKIPPED':
