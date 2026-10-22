@@ -37,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [55, 56, 57]
+        sdk: [55, 56, 57, 58]
     env:
       HOTCODEPUSH_OFFLINE: '1'
     steps:
@@ -68,7 +68,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [55, 56, 57]
+        sdk: [55, 56, 57, 58]
     env:
       HOTCODEPUSH_OFFLINE: '1'
     steps:
