@@ -1,9 +1,9 @@
 # The bundle that mounts nothing: the app runs a release that passed
 # readiness, the next one's entry file registers no root component, so React
 # Native never starts a surface. The process ends, on iOS because the release
-# build aborts on start, and the next start rolls back (APP_CRASHED), the
+# build aborts on start, and the next start rolls back (`app_crashed`), the
 # reason seen on iOS and Android; a readiness gate that times out and reloads
-# the release before (READINESS_TIMED_OUT) is the accepted alternative. Either
+# the release before (`readiness_timed_out`) is the accepted alternative. Either
 # way the updateRolledBack listener names the broken release, and the next
 # check skips it. Continues from signed.yaml, which left the app on the
 # release it returns to; the runner releases the broken build and passes its
@@ -27,13 +27,14 @@ appId: com.hotcodepush.demo.expo
 - repeat:
     times: 3
     while:
-      visible: 'FAILED · DEVICE_OFFLINE.*'
+      visible: 'failed · device_offline.*'
     commands:
       - tapOn: 'Sync now'
       - extendedWaitUntil:
           notVisible: 'syncing…'
           timeout: 60000
-- assertVisible: '(DOWNLOADED|UP_TO_DATE).*'
+# Downloaded at the tap or by the check at start; `next_start` applies it.
+- assertVisible: 'downloaded · #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION}, applies next_start'
 - stopApp
 - launchApp:
     permissions:
@@ -49,21 +50,21 @@ appId: com.hotcodepush.demo.expo
 - repeat:
     times: 3
     while:
-      notVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READINESS_TIMED_OUT|APP_CRASHED)'
+      notVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (readiness_timed_out|app_crashed)'
     commands:
       - extendedWaitUntil:
-          visible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READINESS_TIMED_OUT|APP_CRASHED)'
+          visible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (readiness_timed_out|app_crashed)'
           timeout: 30000
           optional: true
       - launchApp:
           permissions:
             notifications: allow
           stopApp: false
-- assertVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (READINESS_TIMED_OUT|APP_CRASHED)'
+- assertVisible: 'from #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION} · (readiness_timed_out|app_crashed)'
 # The failed bundle is blocklisted on this device: the next check skips it.
 - assertVisible: '#${EXPECTED_RELEASE_NUMBER} · ${EXPECTED_VERSION}'
 - tapOn: 'Sync now'
 - extendedWaitUntil:
     notVisible: 'syncing…'
     timeout: 60000
-- assertVisible: 'SKIPPED · BUNDLE_FAILED_BEFORE'
+- assertVisible: 'skipped · bundle_failed_before'

@@ -89,18 +89,18 @@ function resolveReleaseText(release: Release | null): string {
 
 function resolveResultText(result: SyncResult): string {
   switch (result.status) {
-    case 'UP_TO_DATE':
-      return 'UP_TO_DATE';
-    case 'AVAILABLE':
-      return `AVAILABLE · ${resolveReleaseText(result.release)}`;
-    case 'DOWNLOADED':
-      return `DOWNLOADED · ${resolveReleaseText(result.release)}, applies ${result.applyStrategy}`;
-    case 'APPLIED':
-      return `APPLIED · ${resolveReleaseText(result.release)}`;
-    case 'SKIPPED':
-      return `SKIPPED · ${result.reason}`;
-    case 'FAILED':
-      return `FAILED · ${result.reason}: ${result.message}`;
+    case 'up_to_date':
+      return 'up_to_date';
+    case 'available':
+      return `available · ${resolveReleaseText(result.release)}`;
+    case 'downloaded':
+      return `downloaded · ${resolveReleaseText(result.release)}, applies ${result.applyStrategy}`;
+    case 'applied':
+      return `applied · ${resolveReleaseText(result.release)}`;
+    case 'skipped':
+      return `skipped · ${result.reason}`;
+    case 'failed':
+      return `failed · ${result.reason}: ${result.message}`;
   }
 }
 
