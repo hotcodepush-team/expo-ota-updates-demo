@@ -33,7 +33,7 @@ The native builds, after `npm run prebuild` and `pod install` in `ios/`: `xcodeb
 No native file is committed, so none is edited by hand: a change to a native project is a change to a config plugin.
 `app.json` lists two, and every prebuild applies them:
 
-- **`@hotcodepush/expo-ota-updates`**, the SDK's. The Xcode phase "Create HotCodePush binary" and the `apply from` line at the end of `android/app/build.gradle` run the CLI's build step on what the build bundled. `AppDelegate.swift` and `MainApplication.kt` hand React Native the bundle the SDK serves. The Podfile pins `HotCodePushCore` at the commit the SDK names.
+- **`@hotcodepush/expo-ota-updates`**, the SDK's. The Xcode phase "Create HotCodePush binary" and the `apply from` line at the end of `android/app/build.gradle` run the CLI's build step on what the build bundled. `AppDelegate.swift` and `MainApplication.kt` hand React Native the bundle the SDK serves.
 - **`./plugins/with-local-stack-cleartext`**, for the device test's local stack. The Android app permits cleartext to `10.0.2.2` and `localhost` alone, through a network security config. iOS needs no edit: the `Info.plist` Expo's template generates allows local networking.
 
 A project prebuilt with an older version of the SDK keeps that version's edits, the core's pin excepted, which every prebuild moves: `npx expo prebuild --clean` regenerates it.
@@ -62,7 +62,7 @@ The runner relies on what this repo names, so a change of any of these is a chan
 ## Dependencies during the build phase
 
 The SDK is pinned to the pkg.pr.new build of one commit, `https://pkg.pr.new/hotcodepush-team/expo-ota-updates/@hotcodepush/expo-ota-updates@<sha>`, never `@main`; a bump is one edit of that sha.
-The React Native package and the pod's commit come with it: the SDK pins the one, and its plugin writes the other into the Podfile at prebuild.
+The React Native package comes with it, pinned by the SDK, and its pod carries the iOS core.
 The CLI is pinned the same way, `https://pkg.pr.new/hotcodepush-team/cli/hotcodepush@<sha>`.
 Every other dependency is pinned to an exact version and bumped by Renovate.
 
