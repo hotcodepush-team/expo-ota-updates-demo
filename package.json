@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hotcodepush/expo-ota-updates": "https://pkg.pr.new/hotcodepush-team/expo-ota-updates/@hotcodepush/expo-ota-updates@bd2d070ff9ff699d98bb27906f53ad2ebfd76d82",
+    "@hotcodepush/expo-ota-updates": "https://pkg.pr.new/hotcodepush-team/expo-ota-updates/@hotcodepush/expo-ota-updates@0219169a28ff93a39f56c45813fda70b45cc7cf8",
     "expo": "55.0.31",
     "expo-dev-client": "55.0.40",
     "react": "19.2.0",
@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/react": "19.2.18",
-    "hotcodepush": "https://pkg.pr.new/hotcodepush-team/cli/hotcodepush@7cbdabe40b97a5c42886ce7a1d1e1743379d25d5",
+    "hotcodepush": "https://pkg.pr.new/hotcodepush-team/cli/hotcodepush@4eba9a15547714910e489b7a273c787c57862151",
     "prettier": "3.9.8",
     "typescript": "5.9.3"
   },
