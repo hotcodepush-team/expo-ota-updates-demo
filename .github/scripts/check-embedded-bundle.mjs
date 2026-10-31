@@ -1,5 +1,4 @@
 // CI runs this on the app directory of each release build.
-// It proves the build embedded its bundle, with every file hash as the manifest records it.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
