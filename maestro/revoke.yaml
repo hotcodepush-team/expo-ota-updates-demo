@@ -1,19 +1,14 @@
-# The revoke: the app runs the newest release, the operator revokes it, and
-# the next check moves the device to the newest older release it qualifies
-# for, applied at once. Continues from golden-path.yaml, which left the app
-# on the release the runner then revoked; by hand, revoke the running release
-# and run `maestro test -e EXPECTED_RELEASE_NUMBER=1 -e EXPECTED_VERSION=v2 maestro/revoke.yaml`.
-# No `env:` header: Maestro defines it after the `-e` parameters, so its
-# values would override them.
+# The running release is revoked.
+# The next check moves the device to the newest older release it qualifies for.
+# Continues from golden-path.yaml. By hand, revoke the running release, then run
+# `maestro test -e EXPECTED_RELEASE_NUMBER=1 -e EXPECTED_VERSION=v2 maestro/revoke.yaml`.
 appId: com.hotcodepush.demo.expo
 ---
-# Every launch names its permissions: Maestro's default allows all, and its
-# location grant can hang the iOS simulator on Xcode 27 for minutes.
 - launchApp:
     permissions:
       notifications: allow
-# The check at start may move the device on its own; a tap does it otherwise,
-# repeated a bounded few times for a device that was offline.
+# The check at start may move the device on its own.
+# Otherwise a tap does, retried for an offline device.
 - repeat:
     times: 3
     while:

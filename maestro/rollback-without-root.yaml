@@ -1,21 +1,10 @@
-# The bundle that mounts nothing: the app runs a release that passed
-# readiness, the next one's entry file registers no root component, so React
-# Native never starts a surface. The process ends, on iOS because the release
-# build aborts on start, and the next start rolls back (`app_crashed`), the
-# reason seen on iOS and Android; a readiness gate that times out and reloads
-# the release before (`readiness_timed_out`) is the accepted alternative. Either
-# way the updateRolledBack listener names the broken release, and the next
-# check skips it. Continues from signed.yaml, which left the app on the
-# release it returns to; the runner releases the broken build and passes its
-# number and label. By hand, release a build whose index.ts registers no root
-# and run
+# The next release registers no root, so the process ends.
+# The next start rolls back with `app_crashed`.
+# A rollback at the readiness gate, `readiness_timed_out`, is also accepted.
+# Continues from signed.yaml. By hand, release a build whose index.ts registers no root, then run
 # `maestro test -e BROKEN_RELEASE_NUMBER=2 -e BROKEN_VERSION=v3 -e EXPECTED_RELEASE_NUMBER=1 -e EXPECTED_VERSION=v2 maestro/rollback-without-root.yaml`.
-# No `env:` header: Maestro defines it after the `-e` parameters, so its
-# values would override them.
 appId: com.hotcodepush.demo.expo
 ---
-# Every launch names its permissions: Maestro's default allows all, and its
-# location grant can hang the iOS simulator on Xcode 27 for minutes.
 - launchApp:
     permissions:
       notifications: allow
@@ -33,20 +22,17 @@ appId: com.hotcodepush.demo.expo
       - extendedWaitUntil:
           notVisible: 'syncing…'
           timeout: 60000
-# Downloaded at the tap or by the check at start; `next_start` applies it.
+# The tap or the check at start downloaded it, and `next_start` applies it.
 - assertVisible: 'downloaded · #${BROKEN_RELEASE_NUMBER} · ${BROKEN_VERSION}, applies next_start'
 - stopApp
 - launchApp:
     permissions:
       notifications: allow
-# On iOS Maestro fails the flow when a screen read meets the end of the
-# process, so the flow lets the broken start end before it reads the screen
-# again, waiting without touching the device: the abort comes about a second
-# after the start, and ten seconds leave room for a slower simulator.
+# On iOS Maestro fails the flow when a screen read meets the end of the process.
+# The abort comes about a second after start, and ten seconds leave room for a slow simulator.
 - evalScript: ${const until = Date.now() + 10000; while (Date.now() < until);}
-# A launch that does not stop the app starts it again when the broken bundle
-# ended the process and leaves a running one alone: a stop would end an app
-# that is up, and its next start would rightly announce nothing.
+# A launch without a stop restarts an ended app and leaves a running one alone.
+# A stop would end a running app, and its next start would not report the rollback.
 - repeat:
     times: 3
     while:

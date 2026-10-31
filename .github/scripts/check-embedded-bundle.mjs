@@ -1,5 +1,4 @@
-// Fails unless a release build embedded its bundle: the hotcodepush.json in the directory given names an embedded
-// bundle, and each file of that bundle sits in the same directory with the hash its manifest records.
+// CI runs this on the app directory of each release build.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

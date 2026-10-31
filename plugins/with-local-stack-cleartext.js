@@ -6,7 +6,8 @@ const {
   withDangerousMod,
 } = require('expo/config-plugins');
 
-// The local stack the device test runs against reaches the host over plain HTTP; nothing else is cleartext.
+// The device test runs against a local stack over plain HTTP.
+// 10.0.2.2 is the host machine as the Android emulator sees it.
 const NETWORK_SECURITY_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
@@ -16,10 +17,7 @@ const NETWORK_SECURITY_CONFIG = `<?xml version="1.0" encoding="utf-8"?>
 </network-security-config>
 `;
 
-/**
- * The Android app permits cleartext to the emulator's host and to localhost alone; iOS allows local networking in
- * the Info.plist Expo's template generates.
- */
+// iOS needs no change: the Info.plist that Expo generates already allows local networking.
 module.exports = function withLocalStackCleartext(config) {
   return withAndroidManifest(
     withNetworkSecurityConfigFile(config),
