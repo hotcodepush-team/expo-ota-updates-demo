@@ -35,6 +35,8 @@ npm run fmt         # run before every commit
 ```
 
 The flows in `maestro/` are the update lifecycle contract the monorepo's `e2e/` runner drives on the simulator and the emulator; each flow's header names what it expects.
+Flows set no `env:` header, since Maestro applies it after the `-e` parameters and would override them.
+Every `launchApp` names its permissions, since the default grants location, which can hang the iOS simulator on Xcode 27.
 By hand: install a release build, release `v2`, then `maestro test -e EXPECTED_VERSION=v2 -e EXPECTED_RELEASE_NUMBER=1 maestro/golden-path.yaml`.
 `CLAUDE.md` holds the native build commands and the wiring the plugin adds.
 
