@@ -76,5 +76,6 @@ Every other dependency is pinned to an exact version and bumped by Renovate.
 
 ## Agent workspace
 
+- `.mcp.json` registers the Expo server; the HotCodePush server joins when it exists.
 - `.claude/skills/` holds the developer skills copied from `hotcodepush-team/.github`, pinned in `skills-lock.json`.
 - Commits are conventional commits; `main` is trunk, CI is the gate, and a commit that lands an issue says `Closes #<n>`.
