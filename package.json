@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@types/react": "19.2.18",
-    "hotcodepush": "https://pkg.pr.new/hotcodepush-team/cli/hotcodepush@461a4fa68600776733725c3fdbf702e0e4762a05",
+    "hotcodepush": "https://pkg.pr.new/hotcodepush-team/cli/hotcodepush@5e67cbc7c62470018263fc0710c064868ebc8ce2",
     "prettier": "3.9.8",
     "typescript": "5.9.3"
   },
