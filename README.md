@@ -13,7 +13,7 @@ npx expo run:ios --configuration Release      # or: npx expo run:android --varia
 ```
 
 The native projects are not committed: `npx expo prebuild` generates them with the SDK's config plugin and installs the pods.
-The committed `hotcodepush.json` names a placeholder app; delete it and run `npx hotcodepush init` to name yours.
+The committed `hotcodepush.json` names the demo's own app; delete it and run `npx hotcodepush init` to name yours.
 OTA updates are off in the development build, where the development server serves the JavaScript, so run a release build.
 Every native build runs the CLI's build step, which writes `hotcodepush.json` into the app; an Xcode archive or an Android release build also registers the store build in HotCodePush.
 Without a login the file names no channel and the app takes no updates.
@@ -22,7 +22,7 @@ Set `HOTCODEPUSH_FILES_BASE_URL` and `HOTCODEPUSH_UPDATES_BASE_URL` for the buil
 ## Usage
 
 Run the app once: it shows `v1` and the current release `embedded`.
-Change `VERSION` in `App.tsx`, release with `npx hotcodepush release create`, which bundles each platform itself, tap "Sync now" and reopen the app to see the new label.
+Change `VERSION` in `App.tsx`, release with `npx hotcodepush release create --platform ios` or `--platform android`, which bundles that platform itself, tap "Sync now" and reopen the app to see the new label.
 
 ## Development
 
