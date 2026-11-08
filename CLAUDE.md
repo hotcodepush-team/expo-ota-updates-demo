@@ -61,7 +61,7 @@ The runner relies on what this repo names, so a change of any of these is a chan
 
 ## Dependencies during the build phase
 
-The SDK is pinned to the pkg.pr.new build of one commit, `https://pkg.pr.new/hotcodepush-team/expo-ota-updates/@hotcodepush/expo-ota-updates@<sha>`, never `@main`; a bump is one edit of that sha.
+The SDK is pinned to its published release, `0.1.0`, bumped by hand when the SDK releases.
 The React Native package comes with it, pinned by the SDK, and its pod carries the iOS core.
 The CLI is pinned to an exact npm release in `devDependencies`, and the release workflow reads that pin as `cli-version`, so one bump moves the native builds and the release together.
 Every other dependency is pinned to an exact version and bumped by Renovate.
