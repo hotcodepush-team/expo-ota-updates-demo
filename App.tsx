@@ -37,6 +37,22 @@ export default function App() {
     }
   }, []);
 
+  // A build without a token carries no channel, and the SDK's own checks skip such a build. The demo
+  // follows `production` by name instead, the channel its app flags discoverable, and syncs once.
+  useEffect(() => {
+    const followProductionWithoutToken = async () => {
+      const channel = await HotCodePush.getChannel();
+      if (channel.id !== null || channel.source === 'runtime') {
+        return;
+      }
+      await HotCodePush.setChannel({ name: 'production' });
+      await syncNow();
+    };
+    followProductionWithoutToken().catch(error =>
+      setSyncText(resolveErrorText(error)),
+    );
+  }, [syncNow]);
+
   return (
     <View style={styles.screen}>
       <Text style={styles.eyebrow}>Bundle version</Text>
