@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // Change this label before a release to see the update land.
 // The device test rewrites this line, so keep its form.
-const VERSION = 'v1';
+const VERSION = 'v2';
 
 export default function App() {
   const { isSyncing, lastSync, state } = useUpdates();
