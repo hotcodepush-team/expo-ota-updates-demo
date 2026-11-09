@@ -16,16 +16,16 @@
   },
   "dependencies": {
     "@hotcodepush/expo-ota-updates": "0.1.0",
-    "expo": "55.0.31",
-    "expo-dev-client": "55.0.40",
-    "react": "19.2.0",
-    "react-native": "0.83.10"
+    "expo": "58.0.23",
+    "expo-dev-client": "58.0.18",
+    "react": "19.3.0",
+    "react-native": "0.88.1"
   },
   "devDependencies": {
-    "@types/react": "19.2.18",
+    "@types/react": "19.3.0",
     "hotcodepush": "0.3.0",
     "prettier": "3.9.8",
-    "typescript": "5.9.3"
+    "typescript": "6.0.3"
   },
   "engines": {
     "node": ">=22"
