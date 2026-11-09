@@ -11,7 +11,7 @@ An Expo app with [`@hotcodepush/expo-ota-updates`](https://github.com/hotcodepus
 
 ## Download
 
-The [downloads release](https://github.com/hotcodepush-team/expo-ota-updates-demo/releases/tag/downloads) carries the app for Android and for the iOS simulator. Every merge to `main` rebuilds both, with the label `v1`, before it ships the update.
+The [newest release](https://github.com/hotcodepush-team/expo-ota-updates-demo/releases/latest) carries the app for Android and for the iOS simulator. Every merge to `main` builds both, with the label `v1`, as a new release before it ships the update.
 
 ```sh
 # Android, on a device or an emulator
