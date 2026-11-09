@@ -1,28 +1,83 @@
 # Expo OTA updates demo by HotCodePush
 
-The demo app for [Expo OTA updates](https://hotcodepush.com/expo-ota-updates) with `@hotcodepush/expo-ota-updates`: one screen showing the bundle version, the current release, the device id, the last sync and the last rollback, a button that syncs now and one that opens the debug screen.
+[![CI](https://github.com/hotcodepush-team/expo-ota-updates-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/hotcodepush-team/expo-ota-updates-demo/actions/workflows/ci.yml)
+[![Release](https://github.com/hotcodepush-team/expo-ota-updates-demo/actions/workflows/release.yml/badge.svg)](https://github.com/hotcodepush-team/expo-ota-updates-demo/actions/workflows/release.yml)
+
+An Expo app with [`@hotcodepush/expo-ota-updates`](https://github.com/hotcodepush-team/expo-ota-updates) in its config plugins, the way `npx hotcodepush init` adds it. It is pre-configured for a HotCodePush app on production. Install the download, open it and watch the first over-the-air (OTA) update land. No account, no setup. Every merge to `main` ships a release to that app through the [GitHub Action](https://github.com/hotcodepush-team/release-action), and CI builds both platforms.
+
+<p align="center">
+  <img src=".github/assets/screenshot.png" alt="The demo on an iPhone simulator, showing the version badge, the current release and the Sync now button" width="320" />
+</p>
+
+## Download
+
+The [downloads release](https://github.com/hotcodepush-team/expo-ota-updates-demo/releases/tag/downloads) carries the app for Android and for the iOS simulator. Every merge to `main` rebuilds both, with the label `v1`, before it ships the update.
+
+```sh
+# Android, on a device or an emulator
+adb install hotcodepush-demo-expo-android.apk
+
+# iOS simulator, booted from Xcode
+unzip hotcodepush-demo-expo-ios-simulator.zip
+xcrun simctl install booted HotCodePushDemo.app
+```
+
+The app starts on `v1` and downloads `v2` on its first sync, the release `main` shipped after the build. Open it again and the badge reads `v2`.
+
+## What you will see
+
+- 🏷️ **A version badge** that changes without a store build, `v1` from the embedded bundle, then the label of the newest release.
+- 🔄 **Sync now**, one call to `sync()`, with the last result and the last rollback on screen.
+- 🛟 **Automatic rollback**: a release whose bundle never renders is rolled back on the next start, and the screen says so.
+- 🔍 **The debug screen**, the SDK's own view of the device, the channel and the last check, one tap away.
+- 🚀 **The release workflow**, `.github/workflows/release.yml`, the GitHub Action releasing once per platform on every merge.
+
+## Tech stack
+
+Expo SDK 55 on React Native 0.83 with the New Architecture, TypeScript, the HotCodePush Expo SDK as a config plugin, Maestro for the device flows.
 
 ## Getting started
+
+### Prerequisites
+
+Node 24, as `.nvmrc` names it, Xcode or Android Studio, and CocoaPods for the iOS build. A HotCodePush account is not needed to run the demo.
+
+### Run it
 
 ```sh
 nvm use
 npm ci
-npx hotcodepush login
 npx expo prebuild
-npx expo run:ios --configuration Release      # or: npx expo run:android --variant release
+npx expo run:ios --configuration Release
 ```
 
-The native projects are not committed: `npx expo prebuild` generates them with the SDK's config plugin and installs the pods.
-The committed `hotcodepush.json` names the demo's own app; delete it and run `npx hotcodepush init` to name yours.
-OTA updates are off in the development build, where the development server serves the JavaScript, so run a release build.
-Every native build runs the CLI's build step, which writes `hotcodepush.json` into the app; an Xcode archive or an Android release build also registers the store build in HotCodePush.
-Without a login the file names no channel and the app takes no updates.
-Set `HOTCODEPUSH_FILES_BASE_URL` and `HOTCODEPUSH_UPDATES_BASE_URL` for the build to point it at the local stack or staging.
+Or `npx expo run:android --variant release`. The native projects are not committed: `prebuild` generates them with the SDK's config plugin. OTA updates are off in a development build, where the development server serves the JavaScript, so run a release build. The app starts on its embedded bundle and syncs against the `production` channel of the demo's app. A build takes only releases created after it was built, so a fresh build answers `skipped · release_older_than_binary` until the next merge to `main` ships a release. That is what the download is for.
 
-## Usage
+### Ship an update of your own
 
-Run the app once: it shows `v1` and the current release `embedded`.
-Change `VERSION` in `App.tsx`, release with `npx hotcodepush release create --platform ios` or `--platform android`, which bundles that platform itself, tap "Sync now" and reopen the app to see the new label.
+Point the demo at an app of yours and release from your machine:
+
+```sh
+npx hotcodepush init
+npx hotcodepush release create --platform ios
+npx hotcodepush release create --platform android
+```
+
+`init` signs you in and rewrites `hotcodepush.json` with your app. Change `VERSION` in `App.tsx` before the release, rebuild once so the store build registers itself, then reopen the app to see the new label.
+
+## Continuous integration
+
+`release.yml` runs on every merge to `main` and releases the change to the demo's app, once per platform:
+
+```yaml
+- uses: hotcodepush-team/release-action@v0.3.0
+  with:
+    token: ${{ secrets.HOTCODEPUSH_TOKEN }}
+    platform: ios
+    bundle-version: ${{ github.sha }}
+```
+
+`ci.yml` prebuilds and builds a release of the app on both platforms with the SDK the repo pins and runs the Maestro flows in `maestro/` on the simulator and the emulator.
 
 ## Development
 
@@ -34,15 +89,11 @@ npm run lint && npm run typecheck
 npm run fmt         # run before every commit
 ```
 
-The flows in `maestro/` are the update lifecycle contract the monorepo's `e2e/` runner drives on the simulator and the emulator; each flow's header names what it expects.
-Flows set no `env:` header, since Maestro applies it after the `-e` parameters and would override them.
-Every `launchApp` names its permissions, since the default grants location, which can hang the iOS simulator on Xcode 27.
-By hand: install a release build, release `v2`, then `maestro test -e EXPECTED_VERSION=v2 -e EXPECTED_RELEASE_NUMBER=1 maestro/golden-path.yaml`.
-`CLAUDE.md` holds the native build commands and the wiring the plugin adds.
+`CLAUDE.md` holds the native build commands, the wiring the plugin adds, the Maestro flows and the environment variables that point a build at a local stack.
 
 ## Documentation
 
-See [hotcodepush.com/docs/expo](https://hotcodepush.com/docs/expo).
+See [hotcodepush.com/docs/sdks/expo](https://hotcodepush.com/docs/sdks/expo).
 
 ## License
 
