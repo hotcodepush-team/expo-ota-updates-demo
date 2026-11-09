@@ -15,7 +15,7 @@ env:
 # Release builds of the native projects prebuild generates with the plugin, on every Expo SDK the package supports: a
 # release build bundles the JavaScript and runs the build step, which writes hotcodepush.json into the app, so each job
 # fails when the app lacks the file, when the file names no embedded bundle, or when a file of that bundle is not in the
-# app as its manifest records it. SDK 55 is the demo's own, built from the lockfile; every other SDK first moves the
+# app as its manifest records it. SDK 58 is the demo's own, built from the lockfile; every other SDK first moves the
 # project to that SDK's latest patch. HOTCODEPUSH_OFFLINE keeps the build step from asking the API, so no credential is
 # needed. The device test, on the demo's own SDK, is the monorepo's.
 jobs:
@@ -52,7 +52,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
       - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
       - run: npm ci
-      - if: matrix.sdk != 55
+      - if: matrix.sdk != 58
         run: |
           npm install expo@^${{ matrix.sdk }}.0.0
           npx expo install --fix
@@ -81,7 +81,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - if: matrix.sdk != 55
+      - if: matrix.sdk != 58
         run: |
           npm install expo@^${{ matrix.sdk }}.0.0
           npx expo install --fix
