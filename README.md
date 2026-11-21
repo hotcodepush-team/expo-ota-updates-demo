@@ -76,7 +76,7 @@ npx hotcodepush release create --platform android
 `release.yml` runs on every merge to `main` and releases the change to the demo's app, once per platform:
 
 ```yaml
-- uses: hotcodepush-team/release-action@v0.3.0
+- uses: hotcodepush-team/release-action@v0.3.1
   with:
     token: ${{ secrets.HOTCODEPUSH_TOKEN }}
     platform: ios
